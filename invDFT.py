@@ -9,21 +9,26 @@ f=file(dataname)
 data=cp.load(f)
 f.close()
 
-magnitude=data[0]
-phase=data[1]
-height=magnitude.shape[0]
-width=magnitude.shape[1]
-fcos=np.zeros(magnitude.shape)
-fsin=np.zeros(magnitude.shape)
+fcos=data[0]
+fsin=data[1]
+#magnitude=data[0]
+#phase=data[1]
+#height=magnitude.shape[0]
+#width=magnitude.shape[1]
+#fcos=np.zeros(magnitude.shape)
+#fsin=np.zeros(magnitude.shape)
+height=fcos.shape[0]
+width=fcos.shape[1]
 
-space=np.zeros(magnitude.shape)
+#space=np.zeros(magnitude.shape)
+space=np.zeros(fcos.shape)
 minspace=10000000.0
 maxspace=0.0
 
-for u in xrange(height):
-	for v in xrange(width):
-		fcos[u][v]=magnitude[u][v]*np.cos(phase[u][v])
-		fsin[u][v]=magnitude[u][v]*np.sin(phase[u][v])
+#for u in xrange(height):
+	#for v in xrange(width):
+		#fcos[u][v]=magnitude[u][v]*np.cos(phase[u][v])
+		#fsin[u][v]=magnitude[u][v]*np.sin(phase[u][v])
 
 for m in xrange(height):
 	for n in xrange(width):

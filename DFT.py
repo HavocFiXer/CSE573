@@ -14,7 +14,8 @@ outfile=open(imagename+'.magnitude.txt','w')
 magnitude=np.zeros((height, width))
 logmag=np.zeros((height,width))
 logmagmax=0.0
-phase=np.zeros((height,width))
+fcos=np.zeros((height,width))
+fsin=np.zeros((height,width))
 
 for u in xrange(height):
 	print u
@@ -31,15 +32,17 @@ for u in xrange(height):
 		#print 'rtmp->', rtmp
 		#print 'itmp->', itmp
 		magnitude[u][v]=np.sqrt(np.power(rtmp,2)+np.power(itmp,2))
+		fcos[u][v]=rtmp
+		fsin[u][v]=itmp
 		outfile.write('%f '%magnitude[u][v])
 		logmag[u][v]=np.log10(magnitude[u][v]+1)
 		if logmag[u][v]>logmagmax:
 			logmagmax=logmag[u][v]
-		phase[u][v]=np.arctan2(itmp,rtmp)
+		#phase[u][v]=np.arctan2(itmp,rtmp)
 	outfile.write('\n')
 
 f=file(imagename+'.mp.data','w')
-cp.dump([magnitude,phase],f)
+cp.dump([fcos,fsin],f)
 f.close()
 	
 outfile.close()
