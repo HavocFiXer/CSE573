@@ -12,36 +12,17 @@ core=np.array([ [ 0, 0,-1,-1,-1, 0, 0],
 				[-1,-3, 5, 5, 5,-3,-1],
 				[ 0,-2,-3,-3,-3,-2, 0],
 				[ 0, 0,-1,-1,-1, 0, 0] ])
-#print core
-#print sum(sum(core))
 im=Image.open(imagename).convert('L')
-#width=im.size[0]
-#height=im.size[1]
-#pix=im.load()
 npim=np.array(im)
-print npim
 newnpim=scipy.signal.convolve2d(npim, core, mode='same')
-print newnpim
-#newim=Image.fromarray(newnpim)
 height=newnpim.shape[0]
 width=newnpim.shape[1]
-outfile=open(imagename.split('.jpeg')[0]+'.corevalue.txt','w')
-for i in xrange(height):
-	for j in xrange(width):
-		outfile.write('%d '%(newnpim[i][j]))
-	outfile.write('\n')
-outfile.close()
 newim=Image.new('L',(width, height), 0)
 newpix=newim.load()
-print 'height:', height
-print 'width:', width
 for i in xrange(height):
 	for j in xrange(width):
 		if newnpim[i][j]<=0:
 			newpix[j,i]=0
 		else:
 			newpix[j,i]=255
-#newim=Image.fromarray(newnpim,'L')
-newim.save(imagename.split('.jpeg')[0]+'.bi.bmp')
-#print 'height:', newim.size[1]
-#print 'width:', newim.size[0]
+newim.save(imagename.split('.jpeg')[0]+'.DoG.jpeg')
