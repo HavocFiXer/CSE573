@@ -2,7 +2,7 @@ import sys
 import numpy as np
 from PIL import  Image
 
-T1=7
+T1=10
 
 def initPix2Reg(npim, supergrid):
 	global T1
