@@ -1,6 +1,7 @@
 import sys
+#import numpy as np
 import cPickle as cp
-from PIL import Image
+#from PIL import Image
 
 begin=int(sys.argv[1])
 end=int(sys.argv[2])
@@ -12,7 +13,7 @@ def drawCircle(radius):
 	x=radius
 	y=0
 	err=0
-	while(x>y):
+	while(x>=y):
 		points.append((x,y))
 		points.append((y,x))
 		points.append((-x,y))
