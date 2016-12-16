@@ -1,0 +1,7 @@
+use command line:
+
+python generateCirclePoints.py [min_radius] [max_radius]
+to get a input file for houghTran.py. min_radius is the minimum radius and max_radius is the maximum radius.
+
+python houghTran.py [configure_file]
+You can see config.txt for the detail format
