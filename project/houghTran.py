@@ -50,13 +50,15 @@ for i in xrange(height):
 			#edgepix[j,i]=0
 #edgeim.save(imagename.split('.jpg')[0]+'.edge.bmp')
 
-maxrad=max(height, width)/2
+#maxrad=max(height, width)/2
+maxrad=100
 minrad=7
 
 f=file(circlename)
 circle=cp.load(f)
 f.close()
 
+universe={}
 os.system('mkdir %s'%(imagename.split('.jpg')[0]))
 outfile=open(imagename.split('.jpg')[0]+'/'+imagename.split('.jpg')[0]+'.stat.txt','w')
 for rad in xrange(minrad, maxrad+1):
@@ -64,40 +66,53 @@ for rad in xrange(minrad, maxrad+1):
 	counter=np.zeros((3*height, 3*width), dtype=np.int)
 	points=circle[rad]
 	stat={}
+	position={}
 	for pair in edgepoints:
 		for delta in points:
 			counter[height+pair[0]+delta[0]][width+pair[1]+delta[1]]+=1
-	subcounter=counter[height:2*height,width:2*width]
-	sd=0.0
-	mean=0.0
-	number=0
+	subcounter=counter[height:2*height, width:2*width]
 	for i in xrange(height):
 		for j in xrange(width):
 			if subcounter[i][j]>counterCut:
-				mean+=subcounter[i][j]
-				sd+=subcounter[i][j]*subcounter[i][j]
-				number+=1
 				if subcounter[i][j] not in stat:
 					stat[subcounter[i][j]]=1
 				else:
 					stat[subcounter[i][j]]+=1
+				if subcounter[i][j] not in position:
+					position[subcounter[i][j]]=[(i,j)]
+				else:
+					position[subcounter[i][j]].append((i,j))
+	statlist=sorted(stat.iteritems(), key=lambda asd:asd[0], reverse=True)
+	outfile.write('rad%d=> '%(rad))
+	for item in statlist:
+		outfile.write('%f:%d\t'%(float(item[0])/float(rad), item[1]))
+	outfile.write('\n')
+	topstat=[]
+	topposition=[]
+	for i in xrange(7):
+		topstat.append(float(statlist[i][0])/float(rad))
+		topposition.append(position[statlist[i][0]][:])
+	universe[rad]=(topstat, topposition)
+
+	#generate heat map, will modify value, do it last
 	for i in xrange(height):
 		for j in xrange(width):
 			if subcounter[i][j] > 255:
 				subcounter[i][j]=255
 	heatmap=Image.fromarray(np.uint8(subcounter))
 	heatmap.save(imagename.split('.jpg')[0]+'/'+imagename.split('.jpg')[0]+'.heatmap.%d.jpg'%(rad))
-	statlist=sorted(stat.iteritems(), key=lambda asd:asd[0], reverse=True)
-	if number==0:
-		mean=0.0
-	else:
-		mean=mean/float(number)/float(rad)
-	if number<=1:
-		sd=0.0
-	else:
-		sd=(sd/float(number-1))**0.5/float(rad)
-	outfile.write('rad%d=> mean:%f, sd:%f, 3sigma: %f->'%(rad, mean, sd, mean+3*sd))
-	for item in statlist:
-		outfile.write('%f:%d\t'%(float(item[0])/float(rad), item[1]))
-	outfile.write('\n')
 outfile.close()
+
+drawcircle=[]
+for rad in xrange(minrad+3, maxrad-4):
+	if universe[rad][0]*impulseRate>universe[rad-1][0]:
+		nxt=0
+		while nxt<4:
+			if universe[rad+nxt][0]*impulseRate>universe[rad+nxt+1][0]:
+				break
+			nxt+=1
+		if nxt<4:
+			for i in xrange(0,nxt+1):
+				for item in universe[rad+i][1]:
+					drawcircle.append((item[0],item[1],rad))
+			
